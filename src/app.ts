@@ -26,6 +26,7 @@ app.get("/test", (req: Request, res: Response) => {
 app.post("/", extractJwtToken, async (req: Request, res: Response) => {
   try {
     const result = await makeRequest(req.body.text);
+    console.log(result);
     res.json({ response: result.candidates[0].content.parts[0].text });
   } catch (error) {
     console.log(error);
