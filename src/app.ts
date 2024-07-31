@@ -19,6 +19,9 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("<h1>Hello API</h1>");
 });
+app.get("/test", (req: Request, res: Response) => {
+  res.send("<h1>This is test route</h1>");
+});
 
 app.post("/", extractJwtToken, async (req: Request, res: Response) => {
   try {
