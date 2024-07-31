@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
+import * as jwt from "jsonwebtoken";
 import { makeRequest } from "./utils";
 import extractJwtToken from "./middleware/extractToken";
 dotenv.config();
@@ -21,7 +22,6 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/", extractJwtToken, async (req: Request, res: Response) => {
   try {
-    console.log("TOKEN: ", req.token);
     const result = await makeRequest(req.body.text);
     res.json({ response: result.candidates[0].content.parts[0].text });
   } catch (error) {
@@ -30,6 +30,18 @@ app.post("/", extractJwtToken, async (req: Request, res: Response) => {
       .status(400)
       .json({ error: "There was an error while trying to get response." });
   }
+});
+
+app.post("/signup", async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+  if (!username || !password)
+    return res
+      .status(400)
+      .json({ error: "Username and password are required" });
+  const token = jwt.sign({ username, password }, process.env.SECRET as string, {
+    expiresIn: "2 days",
+  });
+  res.json({ token });
 });
 
 app.listen(process.env.PORT, () => {
